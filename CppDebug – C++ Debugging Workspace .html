@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>CppDebug – C++ Debugging Workspace</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#fafafa;--panel:#fff;--bd:#e0e0e6;--tx:#1c1c22;--mu:#6b6b78;--ac:#4f6df5;--er:#d93a3a;--wa:#c98a00;--in:#2a8bd8;--ok:#1f9d5c}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#16161a;--panel:#1e1e24;--bd:#2f2f38;--tx:#e6e6ec;--mu:#8b8b98;--ac:#7b92ff;--er:#ff6b6b;--wa:#f0b429;--in:#5cb3ff;--ok:#4cd387}}
+:root[data-theme=dark]{--bg:#16161a;--panel:#1e1e24;--bd:#2f2f38;--tx:#e6e6ec;--mu:#8b8b98;--ac:#7b92ff;--er:#ff6b6b;--wa:#f0b429;--in:#5cb3ff;--ok:#4cd387}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px system-ui,sans-serif;height:100vh;display:flex;flex-direction:column}
+header{display:flex;gap:8px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--bd);background:var(--panel);flex-wrap:wrap}
+.logo{font-weight:700;margin-right:auto}.logo b{color:var(--ac)}
+button,select{background:var(--panel);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:6px 12px;font:inherit;cursor:pointer}
+button:hover{border-color:var(--ac)}button.p{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:600}button:disabled{opacity:.5;cursor:default}
+main{flex:1;display:grid;grid-template-columns:1.4fr 1fr;grid-template-rows:minmax(0,1fr);gap:10px;padding:10px;min-height:0}
+@media(max-width:800px){main{grid-template-columns:1fr;grid-template-rows:none;grid-auto-rows:minmax(320px,75vh);overflow:auto}}
+.pane{background:var(--panel);border:1px solid var(--bd);border-radius:12px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.ph{padding:8px 12px;border-bottom:1px solid var(--bd);display:flex;gap:8px;align-items:center;color:var(--mu)}
+.ed{flex:1;display:flex;align-items:flex-start;min-height:0;overflow:auto;font:13px/20px "JetBrains Mono",Consolas,monospace}
+#gut{position:sticky;left:0;z-index:1;flex:none;width:52px;background:var(--panel);text-align:right;padding:8px 8px 8px 0;color:var(--mu);border-right:1px solid var(--bd);white-space:pre;user-select:none}
+#code{flex:none;width:100%;height:100px;border:0;outline:0;resize:none;padding:8px;background:transparent;color:var(--tx);font:inherit;white-space:pre;overflow:hidden;tab-size:4}
+#res{flex:1;overflow:auto;padding:8px}
+.card{border:1px solid var(--bd);border-left:4px solid var(--in);border-radius:8px;padding:8px 10px;margin-bottom:8px;cursor:pointer}
+.card.error{border-left-color:var(--er)}.card.warning{border-left-color:var(--wa)}.card.sel{outline:2px solid var(--ac)}
+.tag{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mu)}
+pre{margin:4px 0;padding:6px 8px;border-radius:6px;background:var(--bg);overflow:auto;font:12px monospace}
+.del{border-left:3px solid var(--er)}.add{border-left:3px solid var(--ok)}
+.bar{height:4px;background:var(--bd)}#pb{height:100%;width:0;background:var(--ac);transition:width .1s}
+.mu{color:var(--mu)}.set{position:relative}.set summary{list-style:none;cursor:pointer;border:1px solid var(--bd);border-radius:8px;padding:6px 12px;background:var(--panel)}.set summary::-webkit-details-marker{display:none}.set>div{position:absolute;right:0;top:115%;z-index:30;min-width:230px;padding:12px;display:grid;gap:8px;background:var(--panel);border:1px solid var(--bd);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.25)}.ed{position:relative}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+:root[data-theme=midnight]{color-scheme:dark;--bg:#0b1020;--panel:#121a30;--bd:#243052;--tx:#dfe6ff;--mu:#7f8bb3;--ac:#6ea8ff;--er:#ff6b81;--wa:#ffc35c;--in:#5cc8ff;--ok:#4ee3a0}
+:root[data-theme=forest]{color-scheme:dark;--bg:#0e1812;--panel:#14231a;--bd:#26402f;--tx:#e3f1e7;--mu:#7fa08a;--ac:#4ade80;--er:#ff7a7a;--wa:#f5c542;--in:#5cc8ff;--ok:#4ade80}
+:root[data-theme=rose]{color-scheme:light;--bg:#fdf6f4;--panel:#fff;--bd:#eadbd6;--tx:#2a1f1d;--mu:#8a7570;--ac:#e0506b;--er:#d62839;--wa:#c77d00;--in:#2b7fd1;--ok:#1f9d5c}
+:root[data-theme=sand]{color-scheme:light;--bg:#f4efe3;--panel:#fffaf0;--bd:#e4d9c0;--tx:#2b2a26;--mu:#7a7566;--ac:#b5651d;--er:#c0392b;--wa:#b7791f;--in:#2c7a9b;--ok:#2f855a}
+body{font-family:Inter,system-ui,-apple-system,sans-serif}
+.logo{display:flex;align-items:center;gap:8px;font-size:15px}.logo i{display:grid;place-items:center;width:24px;height:24px;border-radius:7px;background:var(--ac);color:#fff;font:700 12px monospace}
+button,select{transition:border-color .15s,background .15s,transform .05s}button:active{transform:translateY(1px)}button.p:hover{filter:brightness(1.1)}
+button:focus-visible,select:focus-visible,#code:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+#code{caret-color:var(--ac)}::selection{background:color-mix(in srgb,var(--ac) 35%,transparent)}
+.pane{box-shadow:0 1px 3px rgba(0,0,0,.1)}.card{transition:background .15s}.card:hover{background:color-mix(in srgb,var(--ac) 7%,transparent)}
+.card.error .tag{color:var(--er)}.card.warning .tag{color:var(--wa)}.card.info .tag{color:var(--in)}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:6px}
+.sbar{display:flex;justify-content:space-between;padding:4px 12px;border-top:1px solid var(--bd);font-size:12px;color:var(--mu)}
+.fixed{border:1px solid var(--ok);border-radius:8px;padding:6px 10px;margin-bottom:8px;color:var(--ok);font-size:13px}
+#toast{position:fixed;right:14px;bottom:14px;background:var(--ok);color:#fff;padding:8px 14px;border-radius:10px;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.25);opacity:0;transform:translateY(8px);transition:.25s;pointer-events:none;z-index:20}#toast.on{opacity:1;transform:none}#ac{position:absolute;z-index:5;min-width:250px;max-width:90%;background:var(--panel);border:1px solid var(--bd);border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.25);font:12px system-ui,sans-serif;overflow:hidden}#ac .i{padding:4px 10px;display:flex;gap:12px;justify-content:space-between;cursor:pointer}#ac .i.on{background:var(--ac);color:#fff}#ac .h{padding:3px 10px;color:var(--mu);border-top:1px solid var(--bd);font-size:11px}.row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+footer{text-align:center;padding:8px 12px;font-size:12px;color:var(--mu);border-top:1px solid var(--bd);background:var(--panel)}
+</style></head><body>
+<header><div class="logo"><i>{}</i><span>Cpp<b>Debug</b></span></div>
+<input type="file" id="up" accept=".cpp,.cc,.cxx,.h,.hpp,.hh,.hxx" hidden>
+<button onclick="up.click()">Upload file</button><button onclick="undo()" id="bu" disabled>Undo</button><button onclick="redo()" id="br" disabled>Redo</button>
+<button onclick="dl()">Export</button><button onclick="resetAll()">Reset</button><details class="set"><summary>Settings</summary><div><label><input type="checkbox" id="acOn" checked> Autocomplete</label><label><input type="checkbox" id="snOn" checked> Snippets</label><label><input type="checkbox" id="pairOn" checked> Auto-close and auto-indent</label><label>C++ standard <select id="std"><option value="11">C++11</option><option value="14">C++14</option><option value="17" selected>C++17</option><option value="20">C++20</option><option value="23">C++23</option></select></label></div></details><label class="mu"><input type="checkbox" id="auto" checked> Auto-analyze</label><select id="theme" onchange="setTheme(this.value)" title="Theme"><option value="auto">Theme: Auto</option><option value="light">Light</option><option value="dark">Dark</option><option value="midnight">Midnight</option><option value="forest">Forest</option><option value="rose">Rose</option><option value="sand">Sand</option></select>
+<button class="p" id="go" onclick="analyze()">Analyze Code</button></header>
+<div class="bar"><div id="pb"></div></div>
+<main>
+<section class="pane"><div class="ph"><span id="fn">untitled.cpp</span><span id="st" class="mu"></span></div>
+<div class="ed" id="ed"><div id="gut">1</div><textarea id="code" spellcheck="false" placeholder="Paste or drop C++ code here…"></textarea></div><div class="sbar"><span id="pos">Ln 1, Col 1</span><span id="live"></span></div></section>
+<section class="pane"><div class="ph"><span id="sum">No analysis yet</span>
+<select id="flt" onchange="render()"><option value="all">All</option><option>error</option><option>warning</option><option>info</option></select></div>
+<div id="res"><p class="mu">Click “Analyze Code”. This page runs a rule-based static analyzer in your browser, in chunks, so large files stay responsive. It does not compile code or call an AI model.</p></div></section>
+</main>
+<script>
+const $=id=>document.getElementById(id);let issues=[],sel=-1,hist=[],fut=[],orig=null,cancel=false;
+const code=$('code');
+function gut(){const ls=code.value.split('\n'),n=ls.length;let mx=0;for(const l of ls)if(l.length>mx)mx=l.length;$('gut').textContent=Array.from({length:n},(_,i)=>i+1).join('\n');code.style.height=(n*20+36)+'px';code.style.width=Math.max($('ed').clientWidth-52,mx*8+40)+'px'}
+code.addEventListener('input',()=>{gut();$('st').textContent='● unsaved';if(orig===null)orig=code.value;});
+
+['dragover','drop'].forEach(e=>document.addEventListener(e,ev=>{ev.preventDefault();if(e==='drop')load(ev.dataTransfer.files[0])}));
+$('up').onchange=e=>load(e.target.files[0]);
+function load(f){if(!f)return;if(!/\.(cpp|cc|cxx|h|hpp|hh|hxx)$/i.test(f.name)){alert('Unsupported file type.');return}
+if(f.size>20e6){alert('File exceeds the 20 MB limit.');return}
+f.text().then(t=>{code.value=t;orig=t;$('fn').textContent=f.name;$('st').textContent=t.split('\n').length+' lines';gut();hist=[];fut=[];issues=[];prevKeys=null;fixedLog=[];render();btn()})}
+function th(){const r=document.documentElement;const d=getComputedStyle(r).getPropertyValue('--bg').trim()==='#16161a';r.dataset.theme=d?'light':'dark'}
+// blank out comments and strings, keeping line structure
+function strip(src){const L=src.split('\n'),out=[];let bc=false;
+for(const l of L){let s='',i=0,q=null;while(i<l.length){const c=l[i],d=l[i+1];
+if(bc){if(c==='*'&&d==='/'){bc=false;s+='  ';i+=2}else{s+=' ';i++}continue}
+if(q){if(c==='\\'){s+='  ';i+=2;continue}if(c===q)q=null;s+=' ';i++;continue}
+if(c==='/'&&d==='*'){bc=true;s+='  ';i+=2;continue}if(c==='/'&&d==='/'){break}
+if(c==='"'||c==="'"){q=c;s+=' ';i++;continue}s+=c;i++}out.push(s)}return out}
+const tick=()=>new Promise(r=>setTimeout(r,0));
+let running=false,pending=false,prevKeys=null,fixedLog=[],autoT;
+async function analyze(silent){if(running){pending=true;return}running=true;$('live').textContent='Analyzing…';
+const selT=sel>=0&&issues[sel]?{t:issues[sel].title,l:issues[sel].line}:null;
+try{await analyze0(silent)}finally{running=false}
+if(code.value.trim()){const ls=code.value.split('\n'),keys=issues.map(i=>({t:i.title,l:i.line,k:i.title+'|'+(ls[i.line-1]||'').trim()}));
+if(prevKeys){const gone=prevKeys.filter(o=>!keys.some(n=>n.t===o.t&&(n.k===o.k||n.l===o.l)));if(gone.length){fixedLog.push(...gone.map(g=>g.t));toast('✓ Resolved: '+gone[0].t+(gone.length>1?' +'+(gone.length-1)+' more':''))}}
+prevKeys=keys}else{prevKeys=null;fixedLog=[]}
+if(selT){const j=issues.findIndex(i=>i.title===selT.t&&i.line===selT.l),j2=j>=0?j:issues.findIndex(i=>i.title===selT.t);if(j2>=0)sel=j2}
+render();$('live').textContent=$('auto').checked?'● live · up to date':'○ manual';
+if(pending){pending=false;analyze(true)}}
+async function analyze0(silent){
+if(!code.value.trim()){if(!silent)alert('Nothing to analyze.');issues=[];return}
+$('go').disabled=true;issues=[];sel=-1;const src=code.value,raw=src.split('\n'),L=strip(src),N=L.length;const add=(sev,line,col,title,why,fix)=>issues.push({sev,line,col,title,why,fix});
+const stages=['Reading source','Checking brackets','Running line rules','Checking includes and memory'];
+// stage 1: brackets
+$('pb').style.width='10%';await tick();
+const st=[],pr={')':'(',']':'[','}':'{'};
+for(let i=0;i<N;i++){if(/^\s*#/.test(L[i]))continue;for(let j=0;j<L[i].length;j++){const c=L[i][j];
+if('([{'.includes(c))st.push([c,i,j]);else if(pr[c]){const t=st.pop();if(!t||t[0]!==pr[c]){add('error',i+1,j+1,'Unmatched “'+c+'”','No matching opener was found for this closing bracket.');if(t)st.push(t)}}}}
+for(const [c,i,j] of st)add('error',i+1,j+1,'Unclosed “'+c+'”','This opening bracket is never closed. Cascading errors later in the file often come from this.');
+// stage 2: line rules in chunks
+const CH=500;
+for(let s=0;s<N;s+=CH){if(cancel)break;
+for(let i=s;i<Math.min(N,s+CH);i++){const l=L[i],t=l.trim(),n=i+1;if(!t||t[0]==='#')continue;
+let m;
+if((m=/^(int|float|double|char|bool|long|short|unsigned)\s+([A-Za-z_]\w*)\s*;/.exec(t)))
+add('warning',n,l.indexOf(m[2])+1,'Uninitialized variable “'+m[2]+'”','Reading a local variable before assigning it is undefined behavior.',{from:raw[i],to:raw[i].replace(/;\s*$/,' = '+(m[1]==='bool'?'false':m[1]==='char'?"'\\0'":'0')+';'),line:i,note:'Initializes to a zero value. Low risk, but confirm 0 is a sensible default.'});
+if((m=/\bif\s*\(([^()=!<>]*[^=!<>])=([^=][^()]*)\)/.exec(l)))
+add('warning',n,m.index+1,'Assignment inside condition','“=” assigns; “==” compares. This is usually a typo.',{from:raw[i],to:raw[i].replace(/(\bif\s*\([^()=!<>]*[^=!<>])=([^=])/,'$1==$2'),line:i,note:'Changes behavior: the condition now compares instead of assigning. Review before accepting.'});
+if(/\bgets\s*\(/.test(l))add('error',n,l.search(/\bgets/)+1,'Unsafe function gets()','gets() cannot limit input length and was removed from C++14. It enables buffer overflows.');
+if((m=/\b(strcpy|strcat|sprintf)\s*\(/.exec(l)))add('warning',n,m.index+1,'Unbounded '+m[1]+'()','No length check, so it can overflow the destination buffer. Prefer std::string, snprintf or strncpy with explicit bounds.');
+if(/\bNULL\b/.test(l))add('info',n,l.search(/\bNULL\b/)+1,'Use nullptr instead of NULL','nullptr is type-safe in modern C++.',{from:raw[i],to:raw[i].replace(/\bNULL\b/g,'nullptr'),line:i,note:'Safe in C++11 and later.'});
+if(/<=\s*[\w.\->]+\.(size|length)\(\)/.test(l)&&/\bfor\s*\(/.test(l))add('warning',n,l.search(/<=/)+1,'Possible off-by-one in loop','Looping with “<=” up to size() reads one element past the end.',{from:raw[i],to:raw[i].replace(/<=(\s*[\w.\->]+\.(size|length)\(\))/,'<$1'),line:i,note:'Changes loop bounds. Verify the loop was not intentionally inclusive.'});
+if(/^\s*(int|float|double|char|bool|auto|std::\w+(<.*>)?|return|[A-Za-z_]\w*\s*=)[^;{}]*[\w)\]"']\s*$/.test(l)&&!/[,(&|+\-*\/<>:?]$/.test(t)&&!/^(public|private|protected|case|default)\b/.test(t)&&!/\)\s*(const)?\s*$/.test(t)){
+const nx=(L.slice(i+1).find(x=>x.trim())||'').trim();if(!/^[.\-+*\/&|?:=<>,)\]]/.test(nx)&&!/^(\{|\()/.test(nx))
+add('warning',n,l.length+1,'Possible missing semicolon','This statement-like line does not end with “;”. Heuristic only, so it is not a confirmed compiler error.',{from:raw[i],to:raw[i].replace(/\s*$/,';'),line:i,note:'Heuristic fix. Recompile to confirm.'})}}
+$('pb').style.width=(20+60*Math.min(1,(s+CH)/N))+'%';$('sum').textContent='Analyzing… '+Math.min(N,s+CH)+'/'+N+' lines';await tick()}
+// stage 3: file-level
+const all=L.join('\n');
+const inc=h=>new RegExp('#\\s*include\\s*<'+h+'>').test(src);
+const need=[[/\bstd::(cout|cin|cerr)\b|\b(cout|cin)\s*(<<|>>)/,'iostream'],[/\bstd::vector\b|\bvector\s*</,'vector'],[/\bstd::string\b/,'string'],[/\bstd::(map|unordered_map)\b/,'map']];
+for(const [re,h] of need){const m=re.exec(all);if(m&&!inc(h)&&!(h==='map'&&inc('unordered_map'))){const ln=all.slice(0,m.index).split('\n').length;
+add('warning',ln,1,'Missing #include <'+h+'>','This file uses a symbol from <'+h+'> but never includes it. It may only compile by accident through another header.',{insert:'#include <'+h+'>',line:0,note:'Adds an include at the top of the file. Safe.'})}}
+const nw=(all.match(/\bnew\b(?!\s*\()/g)||[]).length,dl=(all.match(/\bdelete\b/g)||[]).length;
+if(nw>dl){const idx=all.search(/\bnew\b/);add('warning',all.slice(0,idx).split('\n').length,1,'Possible memory leak',nw+' uses of new vs '+dl+' delete in this file. Prefer std::unique_ptr or std::make_unique. Needs manual review, no automatic fix.')}
+if(/using\s+namespace\s+std\s*;/.test(all))add('info',(all.slice(0,all.search(/using\s+namespace\s+std/)).split('\n').length),1,'using namespace std','Pulls every std name into scope and can cause name clashes, especially in headers.');
+issues.sort((a,b)=>a.line-b.line);$('pb').style.width='100%';setTimeout(()=>$('pb').style.width='0',500);$('go').disabled=false;render()}
+function render(){const f=$('flt').value,c={error:0,warning:0,info:0};issues.forEach(i=>c[i.sev]++);
+$('sum').textContent=issues.length?issues.length+' issues · '+c.error+' errors · '+c.warning+' warnings · '+c.info+' info':'No issues found by these rules (this does not prove the code is correct)';
+const r=$('res');r.innerHTML='';if(fixedLog.length){const dt=document.createElement('details');dt.className='fixed';const sm=document.createElement('summary');sm.textContent='✓ '+fixedLog.length+' resolved this session';dt.appendChild(sm);fixedLog.forEach(t=>{const p=document.createElement('div');p.className='mu';p.textContent='• '+t;dt.appendChild(p)});r.appendChild(dt)}issues.forEach((it,k)=>{if(f!=='all'&&it.sev!==f)return;const d=document.createElement('div');d.className='card '+it.sev+(k===sel?' sel':'');
+d.innerHTML='<div class="tag">'+it.sev+' · line '+it.line+':'+it.col+'</div><b></b>';d.querySelector('b').textContent=it.title;
+d.onclick=()=>{sel=k;goto(it);render()};
+if(k===sel){const p=document.createElement('div');p.innerHTML='<p></p>';p.firstChild.textContent=it.why;d.appendChild(p);
+if(it.fix){const x=it.fix,a=x.insert?'':x.from.trim(),b=x.insert||x.to.trim();
+if(a){const o=document.createElement('pre');o.className='del';o.textContent='- '+a;d.appendChild(o)}
+const w=document.createElement('pre');w.className='add';w.textContent='+ '+b;d.appendChild(w);
+const n=document.createElement('p');n.className='mu';n.textContent='Impact: '+x.note;d.appendChild(n);
+const bt=document.createElement('button');bt.className='p';bt.textContent='Fix this issue';bt.onclick=e=>{e.stopPropagation();apply([it])};d.appendChild(bt);if(/^Changes behavior/.test(x.note))exBlock(it,d)}
+else{const n=document.createElement('p');n.className='mu';n.textContent='No safe automatic fix. This needs a decision from you.';d.appendChild(n);exBlock(it,d)}}
+r.appendChild(d)});
+const safe=issues.filter(i=>i.fix&&!/^Changes behavior/.test(i.fix.note));if(safe.length){const b=document.createElement('button');b.className='p';b.style.cssText='width:100%;margin-bottom:8px';b.textContent='Fix all safe issues ('+safe.length+')';b.onclick=()=>{if(confirm('Apply '+safe.length+' safe fixes? Behavior-changing fixes are skipped. You can undo afterwards.'))apply(safe)};r.prepend(b)}}
+function goto(it){const ls=code.value.split('\n');let p=0;for(let i=0;i<it.line-1;i++)p+=ls[i].length+1;code.focus();code.setSelectionRange(p,p+(ls[it.line-1]||'').length);$('ed').scrollTop=Math.max(0,(it.line-4)*20)}
+function apply(list){const ls=code.value.split('\n');hist.push(code.value);fut=[];
+const ins=[];list.filter(i=>i.fix).sort((a,b)=>b.fix.line-a.fix.line).forEach(i=>{const x=i.fix;if(x.insert){if(!ins.includes(x.insert))ins.push(x.insert)}else if(ls[x.line]===x.from)ls[x.line]=x.to});
+ins.forEach(h=>ls.unshift(h));code.value=ls.join('\n');gut();btn();$('st').textContent='● unsaved';analyze().then(()=>{$('sum').textContent='Re-analyzed after fix · '+$('sum').textContent})}
+function undo(){if(!hist.length)return;fut.push(code.value);code.value=hist.pop();gut();btn();analyze()}
+function redo(){if(!fut.length)return;hist.push(code.value);code.value=fut.pop();gut();btn();analyze()}
+function resetAll(){if(code.value.trim()&&!confirm('Reset the workspace? This clears the code, results and undo history.'))return;cancel=true;setTimeout(()=>cancel=false,50);code.value='';orig=null;hist=[];fut=[];issues=[];prevKeys=null;fixedLog=[];sel=-1;$('flt').value='all';$('fn').textContent='untitled.cpp';$('st').textContent='';$('pb').style.width='0';$('go').disabled=false;$('up').value='';gut();btn();$('res').innerHTML='<p class="mu">Workspace reset. Paste or upload C++ code, then click “Analyze Code”.</p>';$('sum').textContent='No analysis yet'}
+const EX=[
+{re:/^(Unmatched|Unclosed)/,before:'if (count > 0 {\n    std::cout << count;\n}',after:'if (count > 0) {\n    std::cout << count;\n}',why:'Every opening bracket needs a closing partner in the right order. Find the bracket this issue points at and close it before the next token. Where exactly the block should end is your decision.'},
+{re:/gets\(\)/,before:'char buf[16];\ngets(buf);',after:'std::string line;\nstd::getline(std::cin, line);',why:'getline reads a whole line into a std::string that grows as needed, so long input can no longer overflow a fixed buffer. Needs <iostream> and <string>.'},
+{re:/^Unbounded/,before:'char name[8];\nstrcpy(name, userInput);',after:'std::string name = userInput;',why:'std::string manages its own size, so copying cannot overflow. If you must keep a char array, copy with an explicit size limit instead.'},
+{re:/memory leak/i,before:'int* p = new int(5);\n// ... function returns without delete',after:'auto p = std::make_unique<int>(5);\n// freed automatically at end of scope',why:'A smart pointer deletes the object for you on every exit path, including early returns and exceptions. Needs <memory>. Whether one owner or several is right depends on your design.'},
+{re:/using namespace std/,before:'using namespace std;\nstring name;',after:'std::string name;',why:'Writing std:: keeps names explicit and avoids clashes with your own identifiers. Apply it to each std name you use.'}];
+function exBlock(it,d){const w=document.createElement('div'),e=EX.find(x=>x.re.test(it.title));
+if(!e){const n=document.createElement('p');n.className='mu';n.textContent='No example is available for this rule yet.';w.appendChild(n);d.appendChild(w);return}
+const mk=(t,c,x)=>{const h=document.createElement('div');h.className='tag';h.textContent=t;const p=document.createElement('pre');p.className=c;p.textContent=x;w.append(h,p)};
+const i=document.createElement('p');i.className='mu';i.textContent='Illustrative example only. The right solution depends on what your program should do.';w.appendChild(i);
+mk('Before','del',e.before);mk('After','add',e.after);const y=document.createElement('p');y.textContent='Why it works: '+e.why;w.appendChild(y);
+const r=document.createElement('div');r.className='row';const b1=document.createElement('button');b1.textContent='Copy example';
+b1.onclick=ev=>{ev.stopPropagation();const t=document.createElement('textarea');t.value=e.after;document.body.appendChild(t);t.select();try{navigator.clipboard.writeText(e.after).catch(()=>document.execCommand('copy'))}catch(x){document.execCommand('copy')}t.remove();b1.textContent='Copied'};
+const b2=document.createElement('button');b2.textContent='Insert below line '+it.line;
+b2.onclick=ev=>{ev.stopPropagation();if(!confirm('Insert this example below line '+it.line+'? Your existing code is not changed. You can undo afterwards.'))return;const ls=code.value.split('\n');hist.push(code.value);fut=[];ls.splice(it.line,0,'// Suggested (illustrative, adapt to your program):',...e.after.split('\n'));code.value=ls.join('\n');gut();btn();$('st').textContent='● unsaved';analyze()};
+r.append(b1,b2);w.appendChild(r);d.appendChild(w)}
+// ---- autocomplete ----
+let acItems=[],acIdx=0,acOpen=false,acSess=null,noAc=false,syms=[],symT;
+const KW='if else for while do switch case default break continue return class struct enum namespace template typename const constexpr static void int long short char bool float double auto nullptr true false new delete try catch throw public private protected virtual override using sizeof'.split(' ');
+const STD=[['std::cout','Standard output'],['std::cin','Standard input'],['std::cerr','Error output'],['std::endl','Newline and flush'],['std::string','Text string'],['std::vector','Dynamic array'],['std::map','Sorted key/value map'],['std::unordered_map','Hash map'],['std::unique_ptr','Owning smart pointer'],['std::make_unique','Create a unique_ptr'],['std::shared_ptr','Shared smart pointer'],['std::sort','Sort a range'],['std::getline','Read a line'],['std::to_string','Number to string'],['std::move','Cast to rvalue']];
+const SN={main:['Minimal main()','int main() {\n    ${1:// code}\n    return 0;\n}$0'],cout:['Print to console','std::cout << ${1:value} << std::endl;$0'],cin:['Read input','std::cin >> ${1:variable};$0'],if:['if statement','if (${1:condition}) {\n    ${2:// code}\n}$0'],ifelse:['if / else','if (${1:condition}) {\n    ${2:// then}\n} else {\n    ${3:// else}\n}$0'],for:['Standard for loop','for (int i = 0; i < ${1:n}; ++i) {\n    ${2:// code}\n}$0'],forr:['Reverse for loop','for (int i = ${1:n} - 1; i >= 0; --i) {\n    ${2:// code}\n}$0'],fore:['Range-based for loop','for (auto& ${1:item} : ${2:container}) {\n    ${3:// code}\n}$0'],while:['while loop','while (${1:condition}) {\n    ${2:// code}\n}$0'],class:['Basic class','class ${1:Name} {\npublic:\n    ${2:// members}\n};$0'],func:['Function','${1:int} ${2:name}(${3:int a}) {\n    ${4:// code}\n    return ${5:0};\n}$0'],vector:['std::vector declaration','std::vector<${1:int}> ${2:v};$0'],try:['try / catch','try {\n    ${1:// code}\n} catch (const std::exception& e) {\n    ${2:std::cerr << e.what() << std::endl;}\n}$0'],switch:['switch statement','switch (${1:value}) {\n    case ${2:1}:\n        ${3:// code}\n        break;\n    default:\n        break;\n}$0'],struct:['Basic struct','struct ${1:Name} {\n    ${2:int value;}\n};$0']};
+function parseSn(b,ind){let out='',rg=[],i=0;b=b.split('\n').join('\n'+ind);while(i<b.length){const m=/^\$(?:\{(\d+)(?::([^}]*))?\}|0)/.exec(b.slice(i,i+80));if(m){const t=m[2]||'';rg.push([out.length,out.length+t.length]);out+=t;i+=m[0].length}else out+=b[i++]}return{text:out,rg}}
+function ins(t){noAc=true;if(!document.execCommand('insertText',false,t)){code.setRangeText(t,code.selectionStart,code.selectionEnd,'end');gut()}noAc=false}
+function refreshSyms(){const s=new Set(),re=/\b[A-Za-z_]\w{2,}\b/g,v=code.value;let m,n=0;while((m=re.exec(v))&&n++<20000)s.add(m[0]);syms=[...s]}
+function acPrefix(){const c=code.selectionStart,v=code.value,ls=v.lastIndexOf('\n',c-1)+1,pre=v.slice(ls,c),m=/[A-Za-z_][\w:]*$/.exec(pre);if(!m)return null;if(!strip(pre)[0].endsWith(m[0]))return null;return{word:m[0],start:c-m[0].length}}
+function acCands(w){const l=w.toLowerCase(),o=[];for(const k in SN)if(k.startsWith(l))o.push({label:k,desc:SN[k][0],sn:1,body:SN[k][1],sc:k.length/100});
+for(const k of KW)if(k.startsWith(l)&&k!==w&&!SN[k])o.push({label:k,ins:k,desc:'keyword',sc:1+k.length/100});
+for(const [k,d] of STD)if(k.toLowerCase().startsWith(l)||(!l.includes(':')&&k.slice(5).startsWith(l)))o.push({label:k,ins:k,desc:d,sc:2+k.length/100});
+for(const s of syms)if(s!==w&&s.toLowerCase().startsWith(l)&&!KW.includes(s))o.push({label:s,ins:s,desc:'in this file',sc:3+s.length/100});
+return o.sort((a,b)=>a.sc-b.sc).slice(0,8)}
+function acHide(){acOpen=false;const b=$('ac');if(b)b.style.display='none'}
+function acPaint(){const b=$('ac');[...b.querySelectorAll('.i')].forEach((r,i)=>r.classList.toggle('on',i===acIdx))}
+function acShow(){const p=acPrefix();if(!$('acOn').checked||acSess||!p||p.word.length<2){acHide();return}
+const c=acCands(p.word);if(!c.length){acHide();return}acItems=c;acIdx=0;acOpen=true;let b=$('ac');if(!b){b=document.createElement('div');b.id='ac';$('ed').appendChild(b)}b.textContent='';
+c.forEach((it,i)=>{const r=document.createElement('div');r.className='i'+(i?'':' on');const a=document.createElement('b'),s=document.createElement('span');a.textContent=it.label;s.textContent=it.desc;s.className='mu';r.append(a,s);r.onmousedown=ev=>{ev.preventDefault();acAccept(it)};b.appendChild(r)});
+const h=document.createElement('div');h.className='h';h.textContent='↑↓ navigate · Tab/Enter accept · Esc close';b.appendChild(h);
+const v=code.value,ls=v.lastIndexOf('\n',p.start-1)+1,ln=v.slice(0,p.start).split('\n').length-1;b.style.display='block';b.style.left=Math.max(60,60+(p.start-ls)*7.8)+'px';b.style.top=(8+(ln+1)*20)+'px'}
+function acAccept(it){const p=acPrefix();if(!p)return;const v=code.value,ls=v.lastIndexOf('\n',p.start-1)+1,ind=/^[ \t]*/.exec(v.slice(ls))[0];code.setSelectionRange(p.start,code.selectionStart);let text=it.ins,rg=[];if(it.sn){const r=parseSn(it.body,ind);text=r.text;rg=r.rg}
+acHide();code.focus();ins(text);if(rg.length){acSess={rg:rg.map(r=>[r[0]+p.start,r[1]+p.start]),i:0};code.setSelectionRange(acSess.rg[0][0],acSess.rg[0][1])}}
+function snTab(back){const s=acSess,cur=s.rg[s.i],e=code.selectionEnd,d=e-cur[1];if(e<cur[0]){acSess=null;return}cur[1]=e;for(let j=s.i+1;j<s.rg.length;j++){s.rg[j][0]+=d;s.rg[j][1]+=d}
+let n=s.i+(back?-1:1);if(n<0)n=0;if(n>=s.rg.length){acSess=null;code.setSelectionRange(e,e);return}s.i=n;code.setSelectionRange(s.rg[n][0],s.rg[n][1])}
+const PR={'(':')','[':']','{':'}','"':'"',"'":"'"};
+code.addEventListener('input',()=>{if(noAc)return;clearTimeout(symT);symT=setTimeout(refreshSyms,400);acShow()});
+code.addEventListener('mousedown',()=>{acHide();acSess=null});code.addEventListener('blur',()=>setTimeout(acHide,150));
+code.addEventListener('keydown',e=>{if(!$('acOn').checked)return;
+if(acOpen){if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();acIdx=(acIdx+(e.key==='ArrowDown'?1:acItems.length-1))%acItems.length;acPaint();return}
+if(e.key==='Enter'||e.key==='Tab'){e.preventDefault();acAccept(acItems[acIdx]);return}if(e.key==='Escape'){e.preventDefault();acHide();return}}
+if(acSess&&code.selectionStart<acSess.rg[0][0])acSess=null;
+if(e.key==='Tab'){e.preventDefault();if(acSess)snTab(e.shiftKey);else if(!e.shiftKey)ins('    ');return}
+if(e.key==='Escape'){acSess=null;return}
+if(e.ctrlKey||e.metaKey||e.altKey)return;
+const ch=e.key,v=code.value,s=code.selectionStart,en=code.selectionEnd,nx=v[s],pv=v[s-1];if(!$('pairOn').checked)return;
+if(ch.length===1){
+if(')]}"\''.includes(ch)&&s===en&&nx===ch){e.preventDefault();code.setSelectionRange(s+1,s+1);return}
+if(PR[ch]){if(s!==en){e.preventDefault();ins(ch+v.slice(s,en)+PR[ch]);return}if(nx&&/[\w"']/.test(nx))return;if((ch==='"'||ch==='\'')&&pv&&/\w/.test(pv))return;e.preventDefault();ins(ch+PR[ch]);code.setSelectionRange(s+1,s+1);return}
+if(ch==='*'&&pv==='/'&&s===en){e.preventDefault();ins('*  */');code.setSelectionRange(s+2,s+2);return}}
+if(e.key==='Backspace'&&s===en&&pv&&PR[pv]&&PR[pv]===nx){e.preventDefault();code.setSelectionRange(s-1,s+1);document.execCommand('delete');return}
+if(e.key==='Enter'&&!e.shiftKey&&s===en){const ls=v.lastIndexOf('\n',s-1)+1,ind=/^[ \t]*/.exec(v.slice(ls,s))[0];
+if(pv==='{'){e.preventDefault();if(nx==='}'){ins('\n'+ind+'    \n'+ind);const c=s+1+ind.length+4;code.setSelectionRange(c,c)}else ins('\n'+ind+'    ');return}
+if(ind){e.preventDefault();ins('\n'+ind)}}});
+refreshSyms();
+function setTheme(v){const r=document.documentElement;if(v==='auto')r.removeAttribute('data-theme');else r.dataset.theme=v;try{localStorage.setItem('cd-theme',v)}catch(e){}}
+try{const t=localStorage.getItem('cd-theme');if(t){$('theme').value=t;setTheme(t)}}catch(e){}
+const tt=document.createElement('div');tt.id='toast';document.body.appendChild(tt);let ttT;
+function toast(m){tt.textContent=m;tt.classList.add('on');clearTimeout(ttT);ttT=setTimeout(()=>tt.classList.remove('on'),3500)}
+function pos(){const c=code.selectionStart,v=code.value,ls=v.lastIndexOf('\n',c-1)+1;$('pos').textContent='Ln '+v.slice(0,c).split('\n').length+', Col '+(c-ls+1)+' · '+v.split('\n').length+' lines'}
+['keyup','click','input'].forEach(e=>code.addEventListener(e,pos));
+code.addEventListener('input',()=>{clearTimeout(autoT);if(!$('auto').checked||!code.value.trim())return;$('live').textContent='● editing…';autoT=setTimeout(()=>analyze(true),600+Math.min(3000,code.value.length/20))});
+$('auto').onchange=()=>{$('live').textContent=$('auto').checked?'● live':'○ manual'};$('auto').onchange();pos();
+function apply(list){const ls=code.value.split('\n'),ins=[],done=new Set();let ok=0,skip=0;
+list.filter(i=>i.fix).forEach(i=>{const x=i.fix;if(x.insert){if(!ins.includes(x.insert)&&!code.value.includes(x.insert)){ins.push(x.insert);ok++}return}
+if(done.has(x.line)||ls[x.line]!==x.from){skip++;return}ls[x.line]=x.to;done.add(x.line);ok++});
+if(!ok){toast('No fixes could be applied. The code changed or fixes overlap, so re-analyze and try again.');return}
+hist.push(code.value);fut=[];ins.forEach(h=>ls.unshift(h));code.value=ls.join('\n');gut();btn();$('st').textContent='● unsaved';
+analyze(true).then(()=>toast('✓ Applied '+ok+' fix'+(ok>1?'es':'')+(skip?' · '+skip+' skipped (overlapping)':'')+' · '+issues.length+' issues remain'))}
+EX.push({re:/^Assignment inside/,before:'if (count = 3) {\n    std::cout << count;\n}',after:'if (count == 3) {\n    std::cout << count;\n}',why:'== compares, while = overwrites count with 3 and is always true. If you really meant to assign, do it on its own line before the if so the intent is clear.'},{re:/^Possible off-by-one/,before:'for (size_t i = 0; i <= v.size(); ++i) {\n    std::cout << v[i];\n}',after:'for (size_t i = 0; i < v.size(); ++i) {\n    std::cout << v[i];\n}',why:'Valid indexes run from 0 to size() - 1, so <= reads one element past the end. A range-based loop (for (int x : v)) cannot go out of range. Keep <= only if you deliberately need the extra step.'});
+const LIB=[['std::cout','Standard output','iostream',11],['std::cin','Standard input','iostream',11],['std::cerr','Error output','iostream',11],['std::endl','Newline and flush','iostream',11],['std::string','Text string','string',11],['std::string_view','Non-owning string view','string_view',17],['std::vector','Dynamic array','vector',11],['std::array','Fixed-size array','array',11],['std::map','Sorted key/value map','map',11],['std::unordered_map','Hash map','unordered_map',11],['std::set','Sorted unique values','set',11],['std::unique_ptr','Owning smart pointer','memory',11],['std::make_unique','Create a unique_ptr','memory',14],['std::shared_ptr','Shared smart pointer','memory',11],['std::optional','Maybe-a-value','optional',17],['std::span','View over contiguous data','span',20],['std::format','Type-safe formatting','format',20],['std::print','Formatted print','print',23],['std::sort','Sort a range','algorithm',11],['std::find','Find a value','algorithm',11],['std::reverse','Reverse a range','algorithm',11],['std::min','Smaller value','algorithm',11],['std::max','Larger value','algorithm',11],['std::swap','Swap two values','utility',11],['std::move','Cast to rvalue','utility',11],['std::accumulate','Sum a range','numeric',11],['std::getline','Read a line','string',11],['std::to_string','Number to string','string',11],['std::stoi','String to int','string',11],['std::sqrt','Square root','cmath',11],['std::pow','Power','cmath',11],['std::abs','Absolute value','cstdlib',11],['std::thread','Run code in a thread','thread',11],['printf','C-style print','cstdio',11],['strlen','C string length','cstring',11],['rand','Random int (C)','cstdlib',11]];
+const METH=[['push_back','Append element',1],['emplace_back','Construct at end',1],['pop_back','Remove last',0],['size','Number of elements',0],['empty','Is it empty?',0],['clear','Remove all',0],['begin','Iterator to start',0],['end','Iterator past end',0],['front','First element',0],['back','Last element',0],['at','Bounds-checked access',1],['insert','Insert element',1],['erase','Remove element',1],['find','Find element',1],['resize','Change size',1],['reserve','Reserve capacity',1],['count','Count matches',1],['c_str','C-style string',0],['substr','Substring',1],['length','String length',0],['append','Append text',1]];
+let hdrs=new Set(),acMem=false;
+function refreshSyms(){const s=new Set(),re=/\b[A-Za-z_]\w{2,}\b/g,v=code.value;let m,n=0;while((m=re.exec(v))&&n++<20000)s.add(m[0]);syms=[...s];hdrs=new Set();const hr=/#\s*include\s*[<"]([\w./]+)[>"]/g;while((m=hr.exec(v)))hdrs.add(m[1])}
+function acPrefix(){const c=code.selectionStart,v=code.value,ls=v.lastIndexOf('\n',c-1)+1,pre=v.slice(ls,c),m=/[A-Za-z_][\w:]*$/.exec(pre);if(!m)return null;if(!strip(pre)[0].endsWith(m[0]))return null;acMem=/(\.|->)$/.test(pre.slice(0,pre.length-m[0].length));return{word:m[0],start:c-m[0].length}}
+function acCands(w){const l=w.toLowerCase(),o=[];
+if(acMem){for(const [k,d,a] of METH)if(k.startsWith(l)&&k!==w)o.push({label:k,ins:k+'()',caret:a,desc:d,sc:k.length/100});return o.sort((a,b)=>a.sc-b.sc).slice(0,8)}
+const sd=+$('std').value;
+if($('snOn').checked)for(const k in SN)if(k.startsWith(l))o.push({label:k,desc:SN[k][0],sn:1,body:SN[k][1],sc:k.length/100});
+for(const k of KW)if(k.startsWith(l)&&k!==w&&!($('snOn').checked&&SN[k]))o.push({label:k,ins:k,desc:'keyword',sc:1+k.length/100});
+for(const [k,d,h,v] of LIB){if(v>sd)continue;const nm=k.startsWith('std::')?k.slice(5):k;if(!(k.toLowerCase().startsWith(l)||(!l.includes(':')&&nm.startsWith(l))))continue;const has=hdrs.has(h);o.push({label:k,ins:k,desc:has?d:d+' · needs <'+h+'>',sc:(has?2:2.5)+k.length/100})}
+for(const s of syms)if(s!==w&&s.toLowerCase().startsWith(l)&&!KW.includes(s))o.push({label:s,ins:s,desc:'in this file',sc:3+s.length/100});
+return o.sort((a,b)=>a.sc-b.sc).slice(0,8)}
+function acAccept(it){const p=acPrefix();if(!p)return;const v=code.value,ls=v.lastIndexOf('\n',p.start-1)+1,ind=/^[ \t]*/.exec(v.slice(ls))[0];code.setSelectionRange(p.start,code.selectionStart);let text=it.ins,rg=[];if(it.sn){const r=parseSn(it.body,ind);text=r.text;rg=r.rg}
+acHide();code.focus();ins(text);if(it.caret){const c=code.selectionStart-it.caret;code.setSelectionRange(c,c)}if(rg.length){acSess={rg:rg.map(r=>[r[0]+p.start,r[1]+p.start]),i:0};code.setSelectionRange(acSess.rg[0][0],acSess.rg[0][1])}}
+refreshSyms();
+function btn(){$('bu').disabled=!hist.length;$('br').disabled=!fut.length}
+function dl(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([code.value]));a.download=$('fn').textContent;a.click()}
+code.value='#include <vector>\n\nint main() {\n    int count;\n    std::vector<int> v = {1,2,3}\n    for (size_t i = 0; i <= v.size(); i++) {\n        std::cout << v[i];\n    }\n    int* p = new int(5);\n    if (count = 3) {\n        p = NULL;\n    }\n    return 0;\n}\n';gut();
+</script></body></html>
